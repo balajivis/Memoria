@@ -1,3 +1,10 @@
+import base64
+from anthropic import Anthropic
+
+client = Anthropic()
+MODEL_NAME = "claude-3-opus-20240229"
+
+
 def retrieve_values_for_tools(user_query):
     return f"""You are given a sentence that contains a property, and you should generate the values in the form of a list of 3 strings, where 
 
@@ -58,6 +65,15 @@ Remember to use the information stored in memory to provide context-aware respon
 
 Analyze their input and manage your memory accordingly to provide the best possible assistance.
 """
+
+
+def claude_response(query):
+    response = client.messages.create(
+    model=MODEL_NAME,
+    max_tokens=2048,
+    messages=[{'role':'user','content':retrieve_values_for_tools(query)}],
+    )
+    return response.content[0].text
 
 
 tools = [
