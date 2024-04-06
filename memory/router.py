@@ -1,5 +1,7 @@
 import base64
 from anthropic import Anthropic
+from memory_manager import Memoria
+
 
 client = Anthropic()
 MODEL_NAME = "claude-3-opus-20240229"
@@ -60,6 +62,11 @@ Based on the user's input, you should determine which memory type to use, and wh
 8. If the user's goal requires you to take actions, then retrieve the tools you need to use through:
     memory_manager.retrieve('procedural','name_of_action')
 
+Example 1: If the user provides you with the set of instructions to set up a Github repo, then you store it into procedural memory using
+    memory_manager.store('procedural', 'Hackathon', "Setup the Git hub repo")
+    
+Example 2: If the user wants to retrieve the information related to hackathon setup, you retrieve from procedural memory to identify if there's relevant information using:
+    memory_manager.retrieve('procedural', 'Hackathon')
 
 Remember to use the information stored in memory to provide context-aware responses and assist the user effectively. If the user's input doesn't fit into any specific memory category, use your best judgment to determine if and where to store or retrieve the information.
 
@@ -92,25 +99,25 @@ tools = [
                     'type': claude_response[1],
                     'description':claude_response[2],
                 },
-                user_query: {
+                'user_query': {
                     'type':'str',
                     'description': 'Query of the user'
                 }
                 }
             },
-            'required':['memory_type',claude_response[0],user_query],
+            'required':['memory_type',claude_response[0],'user_query'],
         },
 
     {
-        "name": 'memory_manager.store',
-        'description': 'Store relevant context into memory',
+        "name": 'memory_manager.retrieve',
+        'description': 'Retrieve relevant context into memory',
         'input_schema': {
             "type": 'object',
             'properties': {
                 'memory_type': {
                     'type': 'string',
                     'enum': ['procedural','longterm','working','associative'],
-                    'description': 'The type of memory we want to store into'
+                    'description': 'The type of memory we want to retrieve from'
                 },
                 claude_response[0]: {
                     'type': claude_response[1],
@@ -121,3 +128,14 @@ tools = [
             'required':['memory_type',claude_response[0]],
         },
 ]
+
+
+def claude_action(query):
+    claude_response = claude_response(query)
+    response = client.beta.tools.messages.create(
+    model=MODEL_NAME,
+    max_tokens=2048,
+    tools = tools,
+    messages=[{'role':'user','content':'Strength training is something I really enjoy.'}],
+    )
+    return response
