@@ -8,11 +8,17 @@ class WorkingMemory(BaseMemory):
     '''
     object is a (key, value)
     '''
-    @abstractmethod
     def store(self, kv):
         key, value = kv 
         self.mem[key] = value
 
-    @abstractmethod
     def retrieve(self, key):
         return self.mem[key] 
+
+    def modify(self, kv) -> bool:
+        key, value = kv
+        if key in self.mem:
+            self.mem = value
+            return True
+    
+        return False
