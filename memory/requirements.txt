@@ -1,0 +1,6 @@
+chromadb==0.4.24
+dill==0.3.8
+huggingface-hub==0.22.2
+langchain==0.1.14
+langchain-community==0.0.31
+langchain-text-splitters==0.0.1

@@ -1,21 +1,19 @@
 from memory.base_memory import BaseMemory
 
 import chromadb
-from chromadb.config import Settings
-from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
+import uuid
 
 
 class AssociativeMemory(BaseMemory):
-    def __init__(self, db_impl='duckdb+parquet', persist_dir="db", telemetry=False):
+    def __init__(self, db_impl='duckdb+parquet', persist_dir="db_am", telemetry=False):
         # Initialize settings for ChromaDB
-        self.client = chromadb.Client(Settings(
-            chroma_db_impl=db_impl,
-            persist_directory=persist_dir,
-            anonymized_telemetry=telemetry
-        ))
-        self.collection = self.client.create_collection(name="Preferences")
+        self.client = chromadb.PersistentClient(path=persist_dir)
+
+        self.collection = self.client.get_or_create_collection(
+            name="Preferences")
 
         # We will use th default embeddings and text splitter for now, later we can change this to below
 
@@ -25,10 +23,12 @@ class AssociativeMemory(BaseMemory):
     def store(self, user_preferences, metadata):
         # This function would take a list of user preferences, turn them into documents
         # and store them in the ChromaDB
-        self.setup_db(user_preferences)
+        id = str(uuid.uuid4())
+
         self.collection.add(
             documents=[user_preferences],
-            metadatas=[metadata]
+            metadatas=[metadata],
+            ids=[id]
         )
 
     def retrieve(self, query):

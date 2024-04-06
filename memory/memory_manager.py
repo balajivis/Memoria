@@ -23,8 +23,8 @@ class MemoryManager:
 # Example usage:
 if __name__ == "__main__":
     memory_manager = MemoryManager()
-    memory_manager.setup_databases()
 
     # Example of storing and retrieving data
-    memory_manager.store('working', 'user_goal', 'Finish hackathon project')
-    print(memory_manager.retrieve('working', 'user_goal'))
+    memory_manager.store('procedural',
+                         'Hackathon', "Setup the Git hub repo")
+    print(memory_manager.retrieve('procedural', 'Hackathon'))
