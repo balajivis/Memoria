@@ -1,4 +1,5 @@
 # Memoria Nexus: Unified Memory Management for AI Systems
+![Memoria Nexus Banner](/banner.png)
 
 Memoria Nexus is an innovative memory management library designed to bring human-like memory capabilities to AI systems. By offering dynamic, context-aware storage and retrieval of information, it facilitates the creation of personalized and adaptive AI interactions. With advanced features like emotion tagging and memory consolidation, Memoria Nexus is not just bridging the gap between current AI functionality and complex human cognition—it's paving the way for AI to cross it.
 
