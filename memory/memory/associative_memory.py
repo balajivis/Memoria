@@ -45,5 +45,5 @@ if __name__ == "__main__":
 
     # Retrieve a preference based on a query
     query = "I want to relax"
-    found_preferences = associative_memory.retriev(query)
+    found_preferences = associative_memory.retrieve(query)
     print(found_preferences)
