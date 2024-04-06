@@ -1,27 +1,27 @@
-retrieve_values_for_tools = """
-You are given a sentence that contains a property, and you should generate the values in the form of a list of 3 strings, where 
+def retrieve_values_for_tools(user_query):
+    return f"""You are given a sentence that contains a property, and you should generate the values in the form of a list of 3 strings, where 
 
-- the first string is the property name, 
-- the second string is the type of the property (str, int) and 
-- the third string is a short 1-line description of what the property is.
+    - the first string is the property name, 
+    - the second string is the type of the property (str, int) and 
+    - the third string is a short 1-line description of what the property is.
 
-Here are a couple of examples that illustrate this:
+    Here are a couple of examples that illustrate this:
 
-<example>
-Sentence: "I enjoy reading sci-fi genre books".
-The output: ['book_genre_interest','str','The genre of books the user enjoys.']
-</example>
+    <example>
+    Sentence: "I enjoy reading sci-fi genre books".
+    The output: ['book_genre_interest','str','The genre of books the user enjoys.']
+    </example>
 
-<example>
-Sentence: "My goal today is to ensure that I can get my bicep-workout done.
-The output: ['today_goal','str',"The user's goal for today"]
-</example>
+    <example>
+    Sentence: "My goal today is to ensure that I can get my bicep-workout done.
+    The output: ['today_goal','str',"The user's goal for today"]
+    </example>
 
-Now perform the same action here:
+    Now perform the same action here:
 
-Sentence: "I love playing FIFA but I sometimes also enjoy playing Rocket League"
-Output:
-"""
+    Sentence: {user_query}
+    Output:
+    """
 
 
 system_prompt = """
@@ -50,9 +50,8 @@ Based on the user's input, you should determine which memory type to use, and wh
 7. If the user provides step-by-step instructions or a procedure to follow, store it in procedural memory using:
    memory_manager.store('procedural', 'name_of_property', 'description_of_property')
 
-
 8. If the user's goal requires you to take actions, then retrieve the tools you need to use through:
-    memory_manager.retrieve('longterm','summary_of_question')
+    memory_manager.retrieve('procedural','name_of_action')
 
 
 Remember to use the information stored in memory to provide context-aware responses and assist the user effectively. If the user's input doesn't fit into any specific memory category, use your best judgment to determine if and where to store or retrieve the information.
@@ -63,46 +62,46 @@ Analyze their input and manage your memory accordingly to provide the best possi
 
 tools = [
     {
-        "name": 'retrieve_from_working_memory',
-        'description': 'retrieve relevant context from working memory',
+        "name": 'memory_manager.store',
+        'description': 'Store relevant context into memory',
         'input_schema': {
             "type": 'object',
             'properties': {
-                'user_goal': {
+                'memory_type': {
                     'type': 'string',
-                    'description': 'The goal that the user wants to achieve'
+                    'enum': ['procedural','longterm','working','associative'],
+                    'description': 'The type of memory we want to store into'
+                },
+                claude_response[0]: {
+                    'type': claude_response[1],
+                    'description':claude_response[2],
+                },
+                user_query: {
+                    'type':'str',
+                    'description': 'Query of the user'
+                }
                 }
             },
-            'required':['user_goal'],
-        }
-    },
+            'required':['memory_type',claude_response[0],user_query],
+        },
+
     {
-        "name": 'store_in_working_memory',
-        'description': 'store updated context into working memory',
+        "name": 'memory_manager.store',
+        'description': 'Store relevant context into memory',
         'input_schema': {
             "type": 'object',
             'properties': {
-                'user_goal': {
+                'memory_type': {
                     'type': 'string',
-                    'description': 'The updated user goal based on new information learned.'
+                    'enum': ['procedural','longterm','working','associative'],
+                    'description': 'The type of memory we want to store into'
+                },
+                claude_response[0]: {
+                    'type': claude_response[1],
+                    'description':claude_response[2],
+                },
                 }
             },
-            'required':['user_goal'],
-        }
-    },
-    
-    {
-        "name": 'store_in_associated_memory',
-        'description': "Store the user's preferences into associated memory",
-        'input_schema': {
-            "type": 'object',
-            'properties': {
-                'user_goal': {
-                    'type': 'string',
-                    'description': "User preferences"
-                }
-            },
-            'required':['user_goal'],
-        }
-    }
+            'required':['memory_type',claude_response[0]],
+        },
 ]
