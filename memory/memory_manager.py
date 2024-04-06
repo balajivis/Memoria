@@ -1,5 +1,5 @@
 from memory.associative_memory import AssociativeMemory
-from memory.longterm_memory import LongtermMemory
+from memory.longterm_memory import LongtermSummaryMemory
 from memory.procedural_memory import ProceduralMemory
 from memory.working_memory import WorkingMemory
 
@@ -8,7 +8,7 @@ class MemoryManager:
     def __init__(self):
         self.working_memory = WorkingMemory()
         self.associative_memory = AssociativeMemory()
-        self.longterm_memory = LongtermMemory()
+        self.longterm_memory = LongtermSummaryMemory()
         self.procedural_memory = ProceduralMemory()
 
     def store(self, memory_type, key, value):
