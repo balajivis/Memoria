@@ -1,10 +1,10 @@
-# from memory.base_memory import BaseMemory
+from memory.base_memory import BaseMemory
 import sqlite3
 import json
 import dill
 
 
-class ProceduralMemory:
+class ProceduralMemory(BaseMemory):
     def __init__(self):
         self.conn = sqlite3.connect("/tmp/mem.db")
         self.cur = self.conn.cursor()
@@ -12,7 +12,6 @@ class ProceduralMemory:
             "CREATE TABLE IF NOT EXISTS tools(name, function BLOB, description, parameters)"
         )
         self.functions = []
-        
 
         # add example methods
         self.store(
@@ -56,7 +55,8 @@ class ProceduralMemory:
                     "input_schema": {
                         "type": "object",
                         "properties": {
-                            param[0]: {"type": param[1], "description": param[2]}
+                            param[0]: {"type": param[1],
+                                       "description": param[2]}
                             for param in parameters
                         },
                         "required": [param[0] for param in parameters]
@@ -65,6 +65,7 @@ class ProceduralMemory:
             )
 
         return formatted_tools
+
 
 mem = ProceduralMemory()
 
